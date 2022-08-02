@@ -9,18 +9,6 @@ beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
 // GET / api / topics
-describe('GET /api/topics', () => {
-  test('returns an array of all the topics', () => {
-    return request(app)
-      .get('/api/topics')
-      .expect(200)
-      .then(res => {
-        expect(res.body.topics).toBeInstanceOf(Array)
-        expect(res.body.topics.length).toBe(3)
-      })
-  })
-})
-
 // describe('GET /api/topics', () => {
 //   test('returns an array of all the topics', () => {
 //     return request(app)
@@ -29,14 +17,26 @@ describe('GET /api/topics', () => {
 //       .then(res => {
 //         expect(res.body.topics).toBeInstanceOf(Array)
 //         expect(res.body.topics.length).toBe(3)
-//         topics.forEach(topic => {
-//           expect(topic).toEqual(
-//             expect.objectContaining({
-//               description: expect.any(String),
-//               slug: expect.any(String),
-//             })
-//           )
-//         })
 //       })
 //   })
 // })
+describe('GET /api/topics', () => {
+  test('Returns an array of all the topics with description and slug properties', () => {
+    return request(app)
+      .get('/api/topics')
+      .expect(200)
+      .then(res => {
+        const topics = res.body.topics
+        expect(topics).toBeInstanceOf(Array)
+        expect(topics.length).toBe(3)
+        topics.forEach(topic => {
+          expect(topic).toEqual(
+            expect.objectContaining({
+              description: expect.any(String),
+              slug: expect.any(String),
+            })
+          )
+        })
+      })
+  })
+})
