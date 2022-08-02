@@ -85,4 +85,31 @@ describe('PATCH /api/articles/:article_id', () => {
         })
       })
   })
+  test('PATCH: should decrement vote for the given article id', () => {
+    return request(app)
+      .patch('/api/articles/3')
+      .send({ inc_votes: -5 }) //PUT PATCH
+      .expect(200)
+      .then(res => {
+        expect(res.body.article).toEqual({
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          body: 'some gifs',
+          votes: -5,
+          topic: 'mitch',
+          author: 'icellusedkars',
+          created_at: '2020-11-03T09:12:00.000Z',
+        })
+      })
+  })
+
+  test('Status:400 returns "bad request"', () => {
+    return request(app)
+      .patch('/api/articles/abc')
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then(response => {
+        expect(response.body.msg).toBe('bad request')
+      })
+  })
 })
