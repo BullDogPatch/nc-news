@@ -66,3 +66,23 @@ describe('GET/api/articles/:article_id', () => {
       })
   })
 })
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('should increment vote for the given article id', () => {
+    return request(app)
+      .patch('/api/articles/3')
+      .send({ inc_votes: 5 }) //PUT PATCH
+      .expect(200)
+      .then(res => {
+        expect(res.body.article).toEqual({
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          body: 'some gifs',
+          votes: 5,
+          topic: 'mitch',
+          author: 'icellusedkars',
+          created_at: '2020-11-03T09:12:00.000Z',
+        })
+      })
+  })
+})
