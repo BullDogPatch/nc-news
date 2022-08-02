@@ -4,7 +4,6 @@ const seed = require('../db/seeds/seed.js')
 const app = require('../app')
 const request = require('supertest')
 
-// Seeding
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
