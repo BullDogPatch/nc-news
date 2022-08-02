@@ -1,4 +1,9 @@
-const { psqlErrors, customErrors, handleFiveHundreds } = require('./errors.js')
+const {
+  psqlErrors,
+  customErrors,
+  handleFiveHundreds,
+  handle404,
+} = require('./errors.js')
 const { getTopics } = require('./controllers/topics.controllers')
 const { getArticleById } = require('./controllers/articles.controllers')
 
@@ -20,5 +25,6 @@ app.get('/api/articles/:article_id', getArticleById)
 app.use(psqlErrors)
 app.use(customErrors)
 app.use(handleFiveHundreds)
+app.use(handle404)
 
 module.exports = app
