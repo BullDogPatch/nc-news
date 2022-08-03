@@ -6,7 +6,7 @@ const {
 } = require('./errors.js')
 const { getTopics } = require('./controllers/topics.controllers')
 const { getArticleById } = require('./controllers/articles.controllers')
-const { getUsers } = require('./controllers/users.controllers')
+const { getUsers } = require('./controllers/users.controllers') //
 const { getVotes } = require('./controllers/getVotes.controllers')
 
 const express = require('express')
