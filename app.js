@@ -6,6 +6,7 @@ const {
 } = require('./errors.js')
 const { getTopics } = require('./controllers/topics.controllers')
 const { getArticleById } = require('./controllers/articles.controllers')
+const { getVotes } = require('./controllers/getVotes.controllers')
 
 const express = require('express')
 
@@ -17,11 +18,9 @@ app.get('/api/topics', getTopics)
 
 app.get('/api/articles/:article_id', getArticleById)
 
-// errors and custom errors
+app.patch('/api/articles/:article_id', getVotes)
 
-// app.all('*', (req, res) => {
-//   res.status(404).send({ msg: 'Path not found' })
-// })
+// errors
 app.use(psqlErrors)
 app.use(customErrors)
 app.use(handleFiveHundreds)
