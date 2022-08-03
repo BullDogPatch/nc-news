@@ -184,7 +184,7 @@ describe('GET /api/articles/:article_id', () => {
       })
   })
   describe('GET /api/articles/:article_id', () => {
-    test('200: should respond with an object', () => {
+    test('200: should respond with an', () => {
       return request(app)
         .get('/api/articles/1')
         .expect(200)
