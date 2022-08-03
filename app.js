@@ -19,13 +19,8 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles/:article_id', getArticleById)
 
 app.patch('/api/articles/:article_id', getVotes)
-console.log(getVotes)
 
-// errors and custom errors
-
-// app.all('*', (req, res) => {
-//   res.status(404).send({ msg: 'Path not found' })
-// })
+// errors
 app.use(psqlErrors)
 app.use(customErrors)
 app.use(handleFiveHundreds)
