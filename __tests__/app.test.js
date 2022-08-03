@@ -102,6 +102,15 @@ describe('PATCH /api/articles/:article_id', () => {
         })
       })
   })
+  test('PATCH check whether the request body is there when passed in something other than a number"', () => {
+    return request(app)
+      .patch('/api/articles/3')
+      .send({ inc_votes: 'blorp' })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('bad request')
+      })
+  })
 
   test('Status:400 returns "bad request"', () => {
     return request(app)
