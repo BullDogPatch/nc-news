@@ -87,12 +87,4 @@ describe('GET api/users', () => {
         })
       })
   })
-  test('Status:404 returns "Not Found"', () => {
-    return request(app)
-      .get('/api/users/abc')
-      .expect(404)
-      .then(response => {
-        expect(response.body.msg).toBe('Not Found')
-      })
-  })
 })
