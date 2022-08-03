@@ -137,7 +137,7 @@ describe('PATCH /api/articles/:article_id', () => {
 })
 
 describe('GET api/users', () => {
-  test('Returns an array of all the users with username, avatar_url and name properties', () => {
+  test('Returns an array of objects of all the users with username, avatar_url and name properties', () => {
     return request(app)
       .get('/api/users')
       .expect(200)
