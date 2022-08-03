@@ -13,3 +13,7 @@ exports.customErrors = (err, req, res, next) => {
 exports.handleFiveHundreds = (err, req, res, next) => {
   res.status(500).send({ msg: 'Server error' })
 }
+
+exports.handle404 = (req, res) => {
+  res.status(404).send({ msg: 'Not Found' })
+}
