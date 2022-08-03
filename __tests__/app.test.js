@@ -66,3 +66,33 @@ describe('GET/api/articles/:article_id', () => {
       })
   })
 })
+
+describe('GET api/users', () => {
+  test('Returns an array of all the users with username, avatar_url and name properties', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(res => {
+        const users = res.body.users
+        expect(users).toBeInstanceOf(Array)
+        expect(users.length).toBe(4)
+        users.forEach(user => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+              name: expect.any(String),
+            })
+          )
+        })
+      })
+  })
+  test('Status:404 returns "Not Found"', () => {
+    return request(app)
+      .get('/api/users/abc')
+      .expect(404)
+      .then(response => {
+        expect(response.body.msg).toBe('Not Found')
+      })
+  })
+})
