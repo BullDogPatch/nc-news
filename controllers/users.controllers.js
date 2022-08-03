@@ -1,5 +1,6 @@
 const { fetchUsers } = require('../models/users.models')
 
+// getUsers
 exports.getUsers = (req, res, next) => {
   fetchUsers()
     .then(users => {

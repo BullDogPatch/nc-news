@@ -1,5 +1,6 @@
 const db = require('../db/connection')
 
+// fetchUsers
 exports.fetchUsers = () => {
   return db
     .query(
