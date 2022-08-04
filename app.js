@@ -8,6 +8,7 @@ const { getTopics } = require('./controllers/topics.controllers')
 const {
   getAllArticles,
   getArticleById,
+  getCommentsByArticleId,
 } = require('./controllers/articles.controllers')
 const {} = require('./controllers/articles.controllers')
 const { getUsers } = require('./controllers/users.controllers') //
@@ -28,6 +29,8 @@ app.get('/api/users', getUsers)
 app.patch('/api/articles/:article_id', getVotes)
 
 app.get('/api/articles', getAllArticles)
+
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
 // errors
 app.use(psqlErrors)
