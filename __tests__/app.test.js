@@ -3,7 +3,7 @@ const testData = require('../db/data/test-data/index.js')
 const seed = require('../db/seeds/seed.js')
 const app = require('../app')
 const request = require('supertest')
-require('jest-sorted')
+require('jest-sorted') // need this require to make toBeSortedBy work
 
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
@@ -262,8 +262,9 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
   })
   test('responds with 404 if passed with valid iD but not present in database', () => {
+    const article_id = 666
     return request(app)
-      .get('/api/articles/10000')
+      .get(`/api/articles/${article_id}/comments`)
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe('Article not found')

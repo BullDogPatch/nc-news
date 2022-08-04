@@ -8,11 +8,11 @@ const { getTopics } = require('./controllers/topics.controllers')
 const {
   getAllArticles,
   getArticleById,
-  getCommentsByArticleId,
 } = require('./controllers/articles.controllers')
 const {} = require('./controllers/articles.controllers')
 const { getUsers } = require('./controllers/users.controllers') //
 const { getVotes } = require('./controllers/getVotes.controllers')
+const { getCommentsByArticleId } = require('./controllers/comments.controllers')
 
 const express = require('express')
 
