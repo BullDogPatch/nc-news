@@ -272,4 +272,14 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
   })
   // test if no comments are present for the article id response is empty array
+  test('Responds with 200 and an empty array when given a valid article id that has no comments', () => {
+    return request(app)
+      .get('/api/articles/4/comments')
+      .expect(200)
+      .then(res => {
+        const { comments } = res.body
+        expect(Array.isArray(comments)).toBe(true)
+        expect(comments).toHaveLength(0)
+      })
+  })
 })
