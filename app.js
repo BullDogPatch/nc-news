@@ -5,7 +5,11 @@ const {
   handle404,
 } = require('./errors.js')
 const { getTopics } = require('./controllers/topics.controllers')
-const { getArticleById } = require('./controllers/articles.controllers')
+const {
+  getAllArticles,
+  getArticleById,
+} = require('./controllers/articles.controllers')
+const {} = require('./controllers/articles.controllers')
 const { getUsers } = require('./controllers/users.controllers') //
 const { getVotes } = require('./controllers/getVotes.controllers')
 
@@ -22,6 +26,8 @@ app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/users', getUsers)
 
 app.patch('/api/articles/:article_id', getVotes)
+
+app.get('/api/articles', getAllArticles)
 
 // errors
 app.use(psqlErrors)
