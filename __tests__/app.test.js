@@ -236,18 +236,19 @@ describe('GET /api/articles', () => {
 
 describe('GET /api/articles/:article_id/comments', () => {
   test('GET Responds with an array of comment objects for the correct article with the comment_id, votes, created_at, author and body properties', () => {
+    const article_id = 9
     return request(app)
-      .get('/api/articles/1/comments')
+      .get(`/api/articles/${article_id}/comments`)
       .expect(200)
-      .then(res => {
-        expect(res.body.comments).toBeInstanceOf(Array)
-        res.body.comments.forEach(comment => {
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array)
+        expect(body.comments).toHaveLength(2)
+        body.comments.forEach(comment => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
-            author: expect.any(String),
-            article_id: expect.any(Number),
             votes: expect.any(Number),
             created_at: expect.any(String),
+            author: expect.any(String),
             body: expect.any(String),
           })
         })
@@ -270,4 +271,5 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Article not found')
       })
   })
+  // test if no comments are present for the article id response is empty array
 })
