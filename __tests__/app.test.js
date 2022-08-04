@@ -261,4 +261,12 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(res.body.msg).toBe('bad request')
       })
   })
+  test('responds with 404 if passed with valid iD but not present in database', () => {
+    return request(app)
+      .get('/api/articles/10000')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article not found')
+      })
+  })
 })
