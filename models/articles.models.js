@@ -28,3 +28,38 @@ exports.selectArticleById = article_id => {
       return article[0]
     })
 }
+
+// Responds with:
+
+// an array of comments for the given article_id of which each comment should have the following properties:
+// comment_id
+// votes
+// created_at
+// author which is the username from the users table
+// body
+
+// exports.fetchCommentsByArticleId = async article_id => {
+//   const comments = await db
+//     .query('SELECT * FROM comments WHERE article_id = $1', [article_id])
+//     .then(({ rows }) => {
+//       console.log(rows)
+//       return rows
+//     })
+//     .catch(err => {
+//       console.log(err)
+//     })
+//   return comments
+// }
+
+exports.fetchCommentsByArticleId = async article_id => {
+  const { rows } = await db.query(
+    `
+    SELECT *
+    FROM comments
+    WHERE article_id=$1;
+    `,
+    [article_id]
+  )
+
+  return rows
+}
