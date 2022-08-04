@@ -18,7 +18,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
   fetchComments(article_id)
     .then(comments => {
       if (comments.length >= 0) {
-        console.log(comments)
         res.status(200).send({ comments })
       } else {
         return Promise.reject({ status: 404, msg: 'Not found' })
