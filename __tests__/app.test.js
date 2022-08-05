@@ -3,7 +3,7 @@ const testData = require('../db/data/test-data/index.js')
 const seed = require('../db/seeds/seed.js')
 const app = require('../app')
 const request = require('supertest')
-const jest_sorted = require('jest-sorted')
+require('jest-sorted') // need this require to make toBeSortedBy work
 
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
@@ -209,7 +209,7 @@ describe('GET /api/articles/:article_id', () => {
 })
 
 describe('GET /api/articles', () => {
-  it('Responds with an array of user objects with the author, title, article_id, topic, created_at, votes and comment_count properties, sorted by date in descending order', () => {
+  test('Responds with an array of user objects with the author, title, article_id, topic, created_at, votes and comment_count properties, sorted by date in descending order', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
@@ -230,6 +230,56 @@ describe('GET /api/articles', () => {
           )
         })
         expect(articles).toBeSortedBy('created_at', { descending: true })
+      })
+  })
+})
+
+describe('GET /api/articles/:article_id/comments', () => {
+  test('GET Responds with an array of comment objects for the correct article with the comment_id, votes, created_at, author and body properties', () => {
+    const article_id = 9
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array)
+        expect(body.comments).toHaveLength(2)
+        body.comments.forEach(comment => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          })
+        })
+      })
+  })
+  test(`Returns a 400 and 'bad request' if trying to get comments of invalid article`, () => {
+    return request(app)
+      .get('/api/articles/blorp/comments')
+      .expect(400)
+      .then(res => {
+        expect(res.body.msg).toBe('bad request')
+      })
+  })
+  test('responds with 404 if passed with valid iD but not present in database', () => {
+    const article_id = 666
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article not found')
+      })
+  })
+  // test if no comments are present for the article id response is empty array
+  test('Responds with 200 and an empty array when given a valid article id that has no comments', () => {
+    return request(app)
+      .get('/api/articles/4/comments')
+      .expect(200)
+      .then(res => {
+        const { comments } = res.body
+        expect(Array.isArray(comments)).toBe(true)
+        expect(comments).toHaveLength(0)
       })
   })
 })
