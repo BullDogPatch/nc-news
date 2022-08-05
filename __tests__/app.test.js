@@ -283,3 +283,56 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
   })
 })
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('Responds with comment object when matching correct id', () => {
+    const newComment = {
+      username: 'lurker',
+      body: 'having a nightmare with backend week',
+    }
+
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            author: 'lurker',
+            body: 'having a nightmare with backend week',
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_id: 1,
+          })
+        )
+      })
+  })
+  test('responds with 400 when article id is not a number', () => {
+    const newComment = {
+      username: 'lurker',
+      body: 'having a nightmare with backend week',
+    }
+
+    return request(app)
+      .post('/api/articles/blorp/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
+  // test(`responds with 404 if user doesn't exist`, () => {
+  //   const newComment = {
+  //     author: 'icellusedkars',
+  //     body: 'make way, king of code coming through!',
+  //   }
+  //   return request(app)
+  //     .post('/api/articles/200/comments')
+  //     .send(newComment)
+  //     .expect(404)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe('Article not found')
+  //     })
+  // })
+})

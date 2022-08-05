@@ -9,10 +9,13 @@ const {
   getAllArticles,
   getArticleById,
 } = require('./controllers/articles.controllers')
-const {} = require('./controllers/articles.controllers')
+
 const { getUsers } = require('./controllers/users.controllers') //
 const { getVotes } = require('./controllers/getVotes.controllers')
-const { getCommentsByArticleId } = require('./controllers/comments.controllers')
+const {
+  getCommentsByArticleId,
+  postComment,
+} = require('./controllers/comments.controllers')
 
 const express = require('express')
 
@@ -31,6 +34,8 @@ app.patch('/api/articles/:article_id', getVotes)
 app.get('/api/articles', getAllArticles)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
+
+app.post('/api/articles/:article_id/comments', postComment)
 
 // errors
 app.use(psqlErrors)

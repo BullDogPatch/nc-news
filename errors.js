@@ -14,6 +14,8 @@ exports.handleFiveHundreds = (err, req, res, next) => {
   res.status(500).send({ msg: 'Server error' })
 }
 
-exports.handle404 = (req, res) => {
-  res.status(404).send({ msg: 'Not Found' })
+exports.handle404 = (err, req, res, next) => {
+  if (err.code === '23503') {
+    res.status(404).send({ msg: res.msg })
+  } else next(err)
 }
