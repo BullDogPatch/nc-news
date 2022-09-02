@@ -9,76 +9,61 @@ beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
 describe('GET /api/topics', () => {
-  describe('GET /api/topics', () => {
-    test('responds with an array of topic objects that have a "slug" and "description" property', () => {
-      return request(app)
-        .get('/api/topics')
-        .expect(200)
-        .then(({ body }) => {
-          const { topics } = body
-          expect(topics).toBeInstanceOf(Array)
-          expect(topics.length).toBe(3)
-          topics.forEach(topic => {
-            expect(topic.hasOwnProperty('slug'))
-            expect(topic.hasOwnProperty('description'))
-          })
-        })
+  test('responds with an array of topic objects that have a "slug" and "description" property', async () => {
+    const {
+      body: { topics },
+    } = await request(app).get('/api/topics')
+    expect(200)
+    expect(topics).toBeInstanceOf(Array)
+    expect(topics).toBeInstanceOf(Array)
+    expect(topics.length).toBe(3)
+    topics.forEach(topic => {
+      expect(topic.hasOwnProperty('slug'))
+      expect(topic.hasOwnProperty('description'))
     })
   })
 })
 
-describe('404 error for invalid URL', () => {
-  test('responds with a 404 error message when passed an invalid URL', () => {
-    return request(app)
-      .get('/blorp')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid URL')
-      })
-  })
-})
-
 describe('GET /api/articles/:article_id', () => {
-  test('responds with an article object with the properties: author, title, article_id, body,topic,created_at & votes.', () => {
-    return request(app)
-      .get(`/api/articles/11`)
-      .expect(200)
-      .then(({ body }) => {
-        const { article } = body
-        expect(article).toBeInstanceOf(Object)
-        expect(article).toEqual(
-          expect.objectContaining({
-            article_id: 11,
-            title: 'Am I a cat?',
-            topic: 'mitch',
-            author: 'icellusedkars',
-            body: 'Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?',
-            created_at: expect.any(String),
-            votes: 0,
-          })
-        )
+  test('should respond with an article object with the properties: author, title, article_id, body,topic,created_at & votes.', async () => {
+    const {
+      body: { article },
+    } = await request(app).get('/api/articles/11')
+    expect(200)
+    expect(article).toBeInstanceOf(Object)
+    expect(article).toEqual(
+      expect.objectContaining({
+        article_id: 11,
+        title: 'Am I a cat?',
+        topic: 'mitch',
+        author: 'icellusedkars',
+        body: 'Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?',
+        created_at: expect.any(String),
+        votes: 0,
       })
+    )
   })
-  test('responds with a 404 error if an article ID that doesnt exist is passed in', () => {
-    return request(app)
-      .get(`/api/articles/999`)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('No article found for article_id: 999')
-      })
+
+  test('should respond with a 404 error if an article ID that doesnt exist is passed in', async () => {
+    const articleID = '12345'
+    const { status, body } = await request(app).get(
+      `/api/articles/${articleID}`
+    )
+    expect(status).toBe(404)
+    expect(body.msg).toBe(`No article found for article_id: ${articleID}`)
   })
-  test('responds with a 400 error if an invalid ID is passed in', () => {
-    return request(app)
-      .get(`/api/articles/banana`)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input')
-      })
+  test('should respond with a 400 error if an invalid ID is passed in', async () => {
+    const articleID = 'banana'
+    const { status, body } = await request(app).get(
+      `/api/articles/${articleID}`
+    )
+    expect(status).toBe(400)
+    expect(body.msg).toBe(`Invalid input`)
   })
 })
 
 describe('PATCH /api/articles/:article_id', () => {
-  test('responds with an updated object where the votes have changed by the number provided in the object', () => {
+  test('should respons with an updated object where the votes have changed by the number provided in the object', () => {
     return request(app)
       .patch('/api/articles/11')
       .send({ inc_vote: 1 })
@@ -99,7 +84,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(body.updatedArticle.article_id).toBe(11)
       })
   })
-  test('responds with status 400 & bad request when the object value is not a number ', () => {
+  test('should respond with status 400 & bad request when the object value is not a number ', () => {
     return request(app)
       .patch('/api/articles/11')
       .send({ inc_vote: 'banana' })
@@ -108,7 +93,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(body.msg).toBe('Bad Request')
       })
   })
-  test('responds with status 400 & bad request when the provided object is empty ', () => {
+  test('should respond with status 400 & bad request when the provided object is empty ', () => {
     return request(app)
       .patch('/api/articles/11')
       .send({})
@@ -175,7 +160,7 @@ describe('GET /api/articles', () => {
 })
 
 describe('GET /api/articles/:article_id', () => {
-  test('responses now include a comment_count', () => {
+  test('response should now include a comment_count', () => {
     return request(app)
       .get(`/api/articles/1`)
       .expect(200)
@@ -196,7 +181,7 @@ describe('GET /api/articles/:article_id', () => {
         )
       })
   })
-  test('returns a comment count when there are 0 comments', () => {
+  test('should still return a comment count when there are 0 comments', () => {
     return request(app)
       .get(`/api/articles/2`)
       .expect(200)
@@ -220,7 +205,7 @@ describe('GET /api/articles/:article_id', () => {
 })
 
 describe('Get /api/articles/:article_id/comments', () => {
-  test('responds with an array of comments for the given article id', () => {
+  test('should repond with an array of comments for the given article id', () => {
     return request(app)
       .get('/api/articles/1/comments')
       .expect(200)
@@ -236,7 +221,7 @@ describe('Get /api/articles/:article_id/comments', () => {
         })
       })
   })
-  test('returns an empty array when passing a valid ID that has no comments', () => {
+  test('should return an empty array when passing a valid ID that has no comments', () => {
     return request(app)
       .get('/api/articles/2/comments')
       .expect(200)
@@ -245,7 +230,7 @@ describe('Get /api/articles/:article_id/comments', () => {
         expect(comments).toEqual([])
       })
   })
-  test('responds with 404 not found when articleID is valid but does not exist', () => {
+  test('should respond with 404 not found when articleID is valid but does not exist', () => {
     return request(app)
       .get('/api/articles/1234567/comments')
       .expect(404)
@@ -264,7 +249,7 @@ describe('Get /api/articles/:article_id/comments', () => {
 })
 
 describe('Post /api/articles/:article_id', () => {
-  test('responds with a status 201 and the newly added comment', () => {
+  test('should respond with a status 201 and the newly added comment', () => {
     const newComment = {
       username: 'butter_bridge',
       body: 'Wow, what a fantastic page',
@@ -285,7 +270,7 @@ describe('Post /api/articles/:article_id', () => {
         )
       })
   })
-  test('responds with a status 400 and "invalid input" when passed an invalid article_id', () => {
+  test('should respond with a status 400 and "invalid input" when passed an invalid article_id', () => {
     const newComment = {
       username: 'butter_bridge',
       body: 'Wow, what a fantastic page',
@@ -298,7 +283,7 @@ describe('Post /api/articles/:article_id', () => {
         expect(msg).toBe('Invalid input')
       })
   })
-  test('responds with a status 400 and "Invalid input" when passed a comment by an invalid username ', () => {
+  test('should respond with a status 400 and "Invalid input" when passed a comment by an invalid username ', () => {
     const newComment = {
       username: 'riasdasdvkjhkfdi',
       body: 'Wow, what a fantastic page',
@@ -311,7 +296,7 @@ describe('Post /api/articles/:article_id', () => {
         expect(msg).toBe('Invalid input')
       })
   })
-  test('responds with a status 400 and "Invalid input" when passed a comment with an invalid body type ', () => {
+  test('should respond with a status 400 and "Invalid input" when passed a comment with an invalid body type ', () => {
     const newComment = {
       username: 'rivi',
       body: 7,
@@ -324,7 +309,7 @@ describe('Post /api/articles/:article_id', () => {
         expect(msg).toBe('Invalid input')
       })
   })
-  test('responds with a status 400 and "Invalid input" when passed an empty comment ', () => {
+  test('should respong with a status 400 and "Invalid input" when passed an empty comment ', () => {
     const newComment = {}
     return request(app)
       .post('/api/articles/2/comments')
@@ -334,7 +319,7 @@ describe('Post /api/articles/:article_id', () => {
         expect(msg).toBe('Invalid input')
       })
   })
-  test('responds with a status 400 and "Invalid input" when passed comment is missing a body ', () => {
+  test('should respond with a status 400 and "Invalid input" when passed comment is missing a body ', () => {
     const newComment = { username: 'butter_bridge' }
     return request(app)
       .post('/api/articles/2/comments')
@@ -364,7 +349,7 @@ describe('GET /api/articles (comment count)', () => {
 })
 
 describe('GET /api/articles (queries)', () => {
-  test('work with a sort by query', () => {
+  test('should work with a sort by query', () => {
     return request(app)
       .get('/api/articles?sort_by=author')
       .expect(200)
@@ -377,14 +362,14 @@ describe('GET /api/articles (queries)', () => {
 
   test('should respond with an "Invalid sort query" message for an invalid query', () => {
     return request(app)
-      .get('/api/articles?sort_by=blorp')
+      .get('/api/articles?sort_by=ushdhjbowejhfb')
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe('Invalid sort query')
       })
   })
 
-  test('responds with an "Invalid order query" message for an invalid order', () => {
+  test('should respond with an "Invalid order query" message for an invalid order', () => {
     return request(app)
       .get('/api/articles?order=kjhbkjdfh')
       .expect(400)
@@ -404,7 +389,7 @@ describe('GET /api/articles (queries)', () => {
       })
   })
 
-  test('status: 200 - orders articles by query', () => {
+  test('status: 200 - accepts order query', () => {
     return request(app)
       .get('/api/articles?sort_by=comment_count&order=ASC')
       .expect(200)
@@ -413,7 +398,7 @@ describe('GET /api/articles (queries)', () => {
       })
   })
 
-  test('articles filtered by topic', () => {
+  test('should return articles filtered by topic', () => {
     return request(app)
       .get('/api/articles?topic=mitch')
       .expect(200)
@@ -432,7 +417,7 @@ describe('DELETE /api/comments/:comment_id', () => {
       .then(() => {})
   })
 
-  test('responds with a status 404 when passed an invalid comment id', () => {
+  test('should respond with a status 404 when passed an invalid comment id', () => {
     return request(app)
       .delete(`/api/comments/98734698`)
       .expect(404)
@@ -441,7 +426,7 @@ describe('DELETE /api/comments/:comment_id', () => {
       })
   })
 
-  test('responds with a status 400 if an invalid comment id is passed in', () => {
+  test('should respons with a status 400 if an invalid comment id is passed in', () => {
     return request(app)
       .delete(`/api/comments/sdjofhbs`)
       .expect(400)

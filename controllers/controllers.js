@@ -1,5 +1,4 @@
-const res = require('express/lib/response')
-const { checkExists, checkItExists } = require('../db/seeds/utils')
+const { checkItExists } = require('../db/seeds/utils')
 const fs = require('fs')
 
 const {
@@ -14,7 +13,7 @@ const {
 } = require('../models/models')
 
 exports.getApi = (req, res, next) => {
-  fs.readFile('endpoints.json', 'utf8', function (err, data) {
+  fs.readFile(`${__dirname}/endpoints.json`, 'utf8', (err, data) => {
     let allEndpoints = JSON.parse(data)
     res.status(200).send(allEndpoints)
   })
@@ -49,25 +48,23 @@ exports.patchVoteUpdate = (req, res, next) => {
     })
 }
 
-exports.getUsers = (req, res, next) => {
-  fetchUsers()
-    .then(users => {
-      res.status(200).send({ users })
-    })
-    .catch(err => {
-      next(err)
-    })
+exports.getUsers = async (req, res, next) => {
+  try {
+    const users = await fetchUsers()
+    res.status(200).send({ users })
+  } catch (err) {
+    next(err)
+  }
 }
 
-exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query
-  fetchArticles(sort_by, order, topic)
-    .then(articles => {
-      res.status(200).send({ articles })
-    })
-    .catch(err => {
-      next(err)
-    })
+exports.getArticles = async (req, res, next) => {
+  try {
+    const { sort_by, order, topic } = req.query
+    const articles = await fetchArticles(sort_by, order, topic)
+    res.status(200).send({ articles })
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.getComments = (req, res, next) => {

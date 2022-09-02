@@ -1,28 +1,24 @@
 const db = require('../db/connection')
-const { checkExists } = require('../db/seeds/utils')
 
-exports.fetchTopics = () => {
-  return db.query('SELECT * FROM topics;').then(({ rows }) => {
-    return rows
-  })
+exports.fetchTopics = async () => {
+  const { rows } = await db.query('SELECT * FROM topics;')
+  return rows
 }
 
-exports.fetchArticleById = article_id => {
-  return db
-    .query(
-      'SELECT articles.*, CAST(COUNT(comment_id)AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;',
-      [article_id]
-    )
-    .then(({ rows }) => {
-      const article = rows[0]
-      if (!article) {
-        return Promise.reject({
-          status: 404,
-          msg: `No article found for article_id: ${article_id}`,
-        })
-      }
-      return article
+exports.fetchArticleById = async article_id => {
+  const queryStr = `SELECT articles.*, CAST(COUNT(comment_id)AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`
+
+  const article = await db
+    .query(queryStr, [article_id])
+    .then(result => result.rows[0])
+
+  if (!article) {
+    return Promise.reject({
+      status: 404,
+      msg: `No article found for article_id: ${article_id}`,
     })
+  }
+  return article
 }
 
 exports.updateVote = (votes, articleId) => {
@@ -51,10 +47,9 @@ exports.updateVote = (votes, articleId) => {
     })
 }
 
-exports.fetchUsers = () => {
-  return db.query('SELECT username FROM users;').then(({ rows }) => {
-    return rows
-  })
+exports.fetchUsers = async () => {
+  const { rows } = await db.query('SELECT username FROM users;')
+  return rows
 }
 
 exports.fetchArticles = (sort_by, order, topic) => {
@@ -96,12 +91,12 @@ exports.fetchArticles = (sort_by, order, topic) => {
   })
 }
 
-exports.fetchComments = article_id => {
-  return db
-    .query('SELECT * FROM comments WHERE article_id = $1;', [article_id])
-    .then(({ rows }) => {
-      return rows
-    })
+exports.fetchComments = async article_id => {
+  const { rows } = await db.query(
+    `SELECT * FROM comments WHERE article_id = $1;`,
+    [article_id]
+  )
+  return rows
 }
 
 exports.insertComment = (article_id, newComment) => {
