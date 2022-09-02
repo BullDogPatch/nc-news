@@ -1,38 +1,53 @@
-const {
-  psqlErrors,
-  customErrors,
-  handleFiveHundreds,
-  handle404,
-} = require('./errors.js')
-const { getTopics } = require('./controllers/topics.controllers')
-const {
-  getAllArticles,
-  getArticleById,
-} = require('./controllers/articles.controllers')
-const {} = require('./controllers/articles.controllers')
-const { getUsers } = require('./controllers/users.controllers') //
-const { getVotes } = require('./controllers/getVotes.controllers')
-
 const express = require('express')
+const cors = require('cors')
+const {
+  getTopics,
+  getApi,
+  getArticlesById,
+  patchVoteUpdate,
+  getUsers,
+  getArticles,
+  getComments,
+  postComment,
+  deleteCommentById,
+  getEndpoints,
+} = require('./controllers/controllers')
 
 const app = express()
-
+app.use(cors())
 app.use(express.json())
+
+app.get('/api', getApi)
 
 app.get('/api/topics', getTopics)
 
-app.get('/api/articles/:article_id', getArticleById)
-
 app.get('/api/users', getUsers)
 
-app.patch('/api/articles/:article_id', getVotes)
+app.get('/api/articles', getArticles)
 
-app.get('/api/articles', getAllArticles)
+app.get('/api/articles/:article_id/comments', getComments)
 
-// errors
-app.use(psqlErrors)
-app.use(customErrors)
-app.use(handleFiveHundreds)
-app.use(handle404)
+app.post('/api/articles/:article_id/comments', postComment)
+
+app.get('/api/articles/:article_id', getArticlesById)
+
+app.patch('/api/articles/:article_id', patchVoteUpdate)
+
+app.delete('/api/comments/:comment_id', deleteCommentById)
+
+app.all('/*', (req, res, next) => {
+  res.status(404).send({ msg: 'Invalid URL' })
+})
+
+app.use((err, req, res, next) => {
+  if (err.code === '22P02' || err.code === '23503' || err.code === '23502') {
+    res.status(400).send({ msg: 'Invalid input' })
+  } else if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg })
+  } else {
+    console.log(err)
+    res.status(500).send('Server Error!')
+  }
+})
 
 module.exports = app
